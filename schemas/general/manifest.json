@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "markdownDescription": "## Manifest (manifest.json)   \nThe manifest file contains **all** the basic information about the pack that Minecraft needs to identify it.",
+  "type": "object",
+  "required": ["format_version", "header", "modules"],
+  "properties": {
+    "format_version": {
+      "markdownDescription": "## Format Version   \nThe syntax version used in the manifest file.  \n**1** for **skin packs**  \n**2** for **resource, behavior, and world packs**",
+      "type": "number",
+      "enum": [1, 2],
+      "default": 2
+    },
+    "header": {
+      "markdownDescription": "## Header   \nSection containing information regarding the name of the pack, description, and other features that are public facing.",
+      "type": "object",
+      "required": ["name", "description", "version", "uuid"]
+    }
+  }
+}

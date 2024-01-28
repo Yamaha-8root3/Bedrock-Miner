@@ -1,0 +1,161 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "bedrock-miner.general.manifest",
+  "markdownDescription": "## Manifest (manifest.json)   \nMinecraftがパックを識別するために必用な**パックに関するすべての基本情報**が含まれています。",
+  "type": "object",
+  "required": ["format_version", "header"],
+
+  "properties": {
+    "format_version": {
+      "markdownDescription": "## Format Version   \nManifestファイルで使用される構文バージョン。  \n基本的に2を使うが1を使うときもある。",
+      "type": "integer",
+      "enum": [1, 2],
+      "enumDescriptions": [
+        "**スキンパック** \n(1.12.xまでのすべてのアドオン)",
+        "**リソース, ビヘイビアー, ワールドパック**"
+      ],
+      "default": 2
+    }
+  },
+  "if": { "properties": { "format_version": { "const": 2 } } },
+  "then": { "$ref": "#/definitions/manifest-v2" },
+  "else": {
+    "if": { "properties": { "format_version": { "const": 1 } } },
+    "then": {},
+    "else": {}
+  },
+
+  "definitions": {
+    "manifest-v2": {
+      "properties": {
+        "header": {
+          "markdownDescription": "## Header   \nパックの名前・説明・その他の機能に関する情報を含むセクション。",
+          "type": "object",
+          "required": ["name", "description", "version", "uuid"],
+          "properties": {
+            "name": { "$ref": "#/definitions/pack_name" },
+            "description": { "$ref": "#/definitions/pack_description" },
+            "version": {
+              "markdownDescription": "## Version   \n`[メジャー,マイナー,リビジョン]`形式のパックのバージョン番号。これは、以前にインポートされたパックをインポートするときに使用されます。  \nバージョンが高い場合は新しいパックが古いパックを置き換え、同じか低い場合は無視します。  \n※マーケットプレースにコンテンツを公開するには、メジャーバージョン値を **1** 以上に設定する必要があります。  \n例:`[1,0,0]`",
+              "$ref": "#/definitions/module_version"
+            },
+            "uuid": {
+              "markdownDescription": "## UUID   \nパックを識別するための識別子。  \nパックの重複を防ぐ役割があります。  \n[8文字]-[4文字]-[4文字]-[12文字]の16進数で構成されます。",
+              "$ref": "#/definitions/uuid"
+            },
+            "min_engine_version": {
+              "markdownDescription": "## Min Engine Vertion   \nリソース・ビヘイビアーパックに必須  \nこのパックが作成されたMinecraftの最小バージョン。  \nこのパックがサポートするバージョンを示してるので、このパックが作成された時のバージョンを指定すればよい。  \n※1.19.**41**などは実際には1.19.**40.1**なので、**1.19.40**と入力しないといけない。詳しくは[bedrock.dev](https://bedrock.dev/)にアクセスして、Miner Versionを参照)",
+              "$ref": "#/definitions/minecraft_version-v2"
+            },
+            "allow_random_seed": {
+              "markdownDescription": "## Allow Random Seed   \nワールドテンプレートを使用したパックで必須。  \nTrueにすると、テンプレートをロードさせたときに**ランダムシードの**ワールドが生成され、自分でシードの変更もできるようになる。  \nFalseにすると、決まったワールドしか生成されない。",
+              "type": "boolean",
+              "default": false
+            },
+            "base_game_version": {
+              "markdownDescription": "##Base Game Version   \nワールドテンプレートを使用したパックで必須なオプション。  \nテンプレートが動作する(最低)バージョンを指定する。下記のMin Engine Versionと同じルールと考えられる(要検証)  \n※1.19.**41**などは実際には1.19.**40.1**なので、**1.19.40**と入力しないといけない。詳しくは[bedrock.dev](https://bedrock.dev/)にアクセスして、Miner Versionを参照)",
+              "$ref": "#/definitions/minecraft_version-v2"
+            },
+            "lock_template_options": {
+              "markdownDescription": "##Lock Template Options   \nワールドテンプレートを使用したパックで必須。  \nワールドの設定をロックするかを設定する。",
+              "type": "boolean",
+              "default": true
+            }
+          }
+        },
+        "module": {
+          "markdownDescription": "## Module   \nパックを構成するモジュールを定義します。  \nモジュールとは、リソース・ビヘイビアー・スクリプト・スキンなどのことです。",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["type", "uuid", "version"],
+            "properties": {
+              "type": {
+                "markdownDescription": "##  Type   \nモジュールの種類。  複数のモジュールをを追加できる。  \n**resources,world_template,client_dataは他と併用できない**",
+                "type": "string",
+                "enum": [
+                  "resources",
+                  "data",
+                  "script",
+                  "javascript",
+                  "plugin",
+                  "client_data",
+                  "world_template",
+                  "interface"
+                ],
+                "enumDescriptions": [
+                  "リソースパック",
+                  "ビヘイビアーパック",
+                  "Gametest / Script API",
+                  "1.19.0.29までのscript",
+                  "1.16.xまでのscript",
+                  "Scripting API [サポート終了]",
+                  "ワールドテンプレート",
+                  " "
+                ]
+              },
+              "description": {
+                "markdownDescription": "##Description   \nモジュールの説明。",
+                "type": "string"
+              },
+              "version": {
+                "markdownDescription": "##Version   \nモジュールのバージョン。",
+                "$ref": "#/definitions/module_version"
+              },
+              "uuid": {
+                "markdownDescription": "##UUID   \nモジュールのUUID。",
+                "$ref": "#/definitions/uuid"
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      }
+    },
+    "pack_name": {
+      "markdownDescription": "## Name   \nMinecraft内に表示されるパックの名前。  \n(記述していない場合は`名前がありません`と表示される。)",
+      "type": "string",
+      "defaultSnippets": [{ "label": "pack.name", "body": "${1:pack.name}" }]
+    },
+    "pack_description": {
+      "markdownDescription": "## Description   \nゲーム内のパック名の下に表示されるパックの簡単な説明。  \n1~2行にすることをお勧めします。",
+      "type": "string",
+      "defaultSnippets": [{ "label": "pack.description", "body": "${1:pack.description}" }]
+    },
+    "module_version": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": [{ "type": "integer" }, { "type": "integer" }, { "type": "integer", "minimum": 1 }],
+      "defaultSnippets": [
+        { "label": "Custom version", "body": "^[${1:0}, ${2:0}, ${3:1}]" },
+        { "label": "0.0.1", "body": "^[0, 0, 1]" },
+        { "label": "1.0.0", "body": "^[1, 0, 0]" }
+      ]
+    },
+    "uuid": {
+      "type": "string",
+      "pattern": "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}",
+      "defaultSnippets": [{ "label": "UUIDを生成", "body": "${1:$UUID}" }]
+    },
+    "minecraft_version-v2": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": [
+        { "type": "integer", "const": 1 },
+        { "type": "integer", "minimum": 13 },
+        { "type": "integer" }
+      ],
+      "defaultSnippets": [
+        { "label": "1.20.50 (Latest)", "body": "^[1,20,50]" },
+        { "label": "1.20.60 (Preview)", "body": "^[1,20,60]" },
+        { "label": "1.20.40", "body": "^[1,20,40]" },
+        { "label": "1.20.30", "body": "^[1,20,30]" },
+        { "label": "1.20.20", "body": "^[1,20,20]" },
+        { "label": "1.20.10", "body": "^[1,20,10]" },
+        { "label": "1.20.0", "body": "^[1,20,0]" }
+      ]
+    }
+  }
+}
