@@ -12,12 +12,31 @@
   "activationEvents": [],
   "main": "./out/extension.js",
   "contributes": {
-    "commands": [
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "bm-menu",
+          "title": "Bedrock Miner",
+          "icon": "./resources/activitybar-icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "bm-menu": [
+        {
+          "id": "bm-menu-openfolder",
+          "name": "Bedrock Miner",
+          "when": "!explorerResourceIsFolder"
+        }
+      ]
+    },
+    "viewsWelcome": [
       {
-        "command": "bedrock-miner.helloWorld",
-        "title": "Hello World"
+        "view": "bm-menu-openfolder",
+        "contents": "Open Folder here\n[Open Folder](command:bm.openfolder)"
       }
-    ]
+    ],
+    "commands": []
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
