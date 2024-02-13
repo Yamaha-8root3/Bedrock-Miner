@@ -12,6 +12,17 @@
   "activationEvents": [],
   "main": "./out/extension.js",
   "contributes": {
+    "configuration": {
+      "title": "Bedrock Miner",
+      "properties": {
+        "bm.projectFolderPath": {
+          "type": "string",
+          "default": "C:\\Users\\%USERNAME%\\Documents\\Bedrock Miner",
+          "title": "Project Folder Path",
+          "description": ""
+        }
+      }
+    },
     "viewsContainers": {
       "activitybar": [
         {
@@ -24,18 +35,12 @@
     "views": {
       "bm-menu": [
         {
-          "id": "bm-menu-openfolder",
-          "name": "Bedrock Miner",
-          "when": "!explorerResourceIsFolder"
+          "id": "bm-menu-projects",
+          "name": "Bedrock Miner"
         }
       ]
     },
-    "viewsWelcome": [
-      {
-        "view": "bm-menu-openfolder",
-        "contents": "Open Folder here\n[Open Folder](command:bm.openfolder)"
-      }
-    ],
+    "viewsWelcome": [],
     "commands": []
   },
   "scripts": {
