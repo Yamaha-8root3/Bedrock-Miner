@@ -9,17 +9,19 @@
   "categories": [
     "Other"
   ],
-  "activationEvents": [],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
   "main": "./out/extension.js",
   "contributes": {
     "configuration": {
       "title": "Bedrock Miner",
       "properties": {
-        "bm.projectFolderPath": {
+        "bedrock-miner.projectFolderPath": {
           "type": "string",
-          "default": "C:\\Users\\%USERNAME%\\Documents\\Bedrock Miner",
+          "default": "",
           "title": "Project Folder Path",
-          "description": ""
+          "description": "default is \"C:\\Users\\%USERNAME%\\Documents\\Bedrock Miner\""
         }
       }
     },
@@ -41,7 +43,22 @@
       ]
     },
     "viewsWelcome": [],
-    "commands": []
+    "commands": [
+      {
+        "command": "bm.refleshProjects",
+        "title": "Reflesh",
+        "icon": "$(sync)"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "bm.refleshProjects",
+          "when": "view == bm-menu-projects",
+          "group": "navigation"
+        }
+      ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
